@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class Application {
     public static void main(String[] args) {
-        System.out.println("Calendar information system [Version 6.7]");
+        System.out.println("Calendar information system [Version 9.11]");
         System.out.println("(c) pzlmchv 24621854. All rights reserved.");
         System.out.println();
         do {
