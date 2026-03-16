@@ -1,9 +1,9 @@
 package bg.tu_varna.ks.command.factories;
 
+import bg.tu_varna.ks.command.events.Book;
+import bg.tu_varna.ks.command.utility.*;
 import bg.tu_varna.ks.contracts.Executable;
 import bg.tu_varna.ks.command.Command;
-import bg.tu_varna.ks.command.utility.Exit;
-import bg.tu_varna.ks.command.utility.Help;
 
 import java.util.List;
 
@@ -23,13 +23,13 @@ public class CommandFactory {
 
     public Executable getExecutable(Command command, List<String> arguments) {
         return switch (command) {
-            case OPEN -> null;
-            case CLOSE -> null;
-            case SAVE -> null;
-            case SAVE_AS -> null;
+            case OPEN -> new Open(arguments);
+            case CLOSE -> new Close();
+            case SAVE -> new Save();
+            case SAVE_AS -> new SaveAs(arguments);
             case HELP -> new Help();
             case EXIT -> new Exit();
-            case BOOK -> null;
+            case BOOK -> new Book(arguments);
             case UNBOOK -> null;
             case AGENDA -> null;
             case CHANGE -> null;
