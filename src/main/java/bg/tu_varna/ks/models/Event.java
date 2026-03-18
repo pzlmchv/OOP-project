@@ -1,9 +1,13 @@
 package bg.tu_varna.ks.models;
 
+import bg.tu_varna.ks.command.files.adapters.LocalDateAdapter;
+import bg.tu_varna.ks.command.files.adapters.LocalTimeAdapter;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.UUID;
@@ -43,6 +47,7 @@ public class Event {
     }
 
     @XmlElement(name = "date")
+    @XmlJavaTypeAdapter(LocalDateAdapter.class)
     public void setDate(LocalDate date) {
         this.date = date;
     }
@@ -52,6 +57,7 @@ public class Event {
     }
 
     @XmlElement(name = "start")
+    @XmlJavaTypeAdapter(LocalTimeAdapter.class)
     public void setStart(LocalTime start) {
         this.start = start;
     }
@@ -61,6 +67,7 @@ public class Event {
     }
 
     @XmlElement(name = "end")
+    @XmlJavaTypeAdapter(LocalTimeAdapter.class)
     public void setEnd(LocalTime end) {
         this.end = end;
     }
@@ -81,6 +88,23 @@ public class Event {
     @XmlElement(name = "note")
     public void setNote(String note) {
         this.note = note;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        return sb.append("Date: ")
+                .append(this.date)
+                .append("\n")
+                .append(this.start)
+                .append(" - ")
+                .append(this.end)
+                .append("\nName: ")
+                .append(this.name)
+                .append(this.note.isEmpty() ? "" : "\nNote: ")
+                .append(this.note.isEmpty() ? "" : this.note)
+                .toString();
     }
 
     public static class EventBuilder {

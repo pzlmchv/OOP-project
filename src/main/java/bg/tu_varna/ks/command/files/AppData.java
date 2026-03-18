@@ -28,29 +28,43 @@ public class AppData implements FileHandler {
         return instance;
     }
 
+    public void write(File file) throws JAXBException {
+        context = JAXBContext.newInstance(Calendar.class);
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        marshaller.marshal(Calendar.getInstance(), file);
+    }
+
+    public void read(File file) throws JAXBException, FileNotFoundException {
+        context = JAXBContext.newInstance(Calendar.class);
+        List<Event> events = (
+                (Calendar)context.createUnmarshaller()
+                        .unmarshal(
+                                new FileReader(
+                                        file.getAbsolutePath()
+                                )
+                        )
+        ).getEvents();
+        Calendar.getInstance().setEvents(events);
+    }
+
+    public void save(File file) throws JAXBException {
+        write(file);
+    }
 
     @Override
     public void load(File file) throws FileNotFoundException, JAXBException {
         try {
-            if (!file.exists()) {
+            if (!file.exists() || file.length() == 0) {
                 file.createNewFile();
+                this.file = file;
+                return;
             }
-            this.file = file;
-            return;
         } catch (IOException ex) {
             ex.printStackTrace();
         }
 
-        context = JAXBContext.newInstance(Calendar.class);
-        List<Event> events = (
-                (Calendar)context.createUnmarshaller()
-                .unmarshal(
-                        new FileReader(
-                                file.getAbsolutePath()
-                        )
-                )
-        ).getEvents();
-        Calendar.getInstance().setEvents(events);
+        read(file);
         this.file = file;
     }
 
@@ -60,10 +74,7 @@ public class AppData implements FileHandler {
             System.out.println("No file open.");
         }
 
-        context = JAXBContext.newInstance(Calendar.class);
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        marshaller.marshal(Calendar.getInstance(), file);
+        write(file);
     }
 
     public File getFile() {

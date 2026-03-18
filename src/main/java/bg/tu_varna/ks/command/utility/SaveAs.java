@@ -39,12 +39,10 @@ public class SaveAs implements Executable {
                 : new File(PATH.concat(arguments.get(0)));
 
         try {
-            AppData.getInstance().load(file);
+            AppData.getInstance().save(file);
             System.out.println("File saved successfully");
         } catch (JAXBException ex) {
             System.err.println(ex.getMessage());
-        } catch (FileNotFoundException ex) {
-            System.err.println("no file found");
         }
     }
 }

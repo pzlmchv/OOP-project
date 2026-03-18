@@ -4,7 +4,7 @@ public enum Command {
     OPEN("open", "Opens a file and reads its contents."),
     CLOSE ("close", "Closes the current file."),
     SAVE("save", "Saves the contents in the current file."),
-    SAVE_AS("save as", "Saves the contents in a directory, chosen by the user."),
+    SAVEAS("saveas", "Saves the contents in a directory, chosen by the user."),
     HELP("help", "Shows all possible commands."),
     EXIT("exit", "Exits the application."),
     BOOK ("book", "Schedules a meeting with name and note at a given date and time."),

@@ -3,6 +3,7 @@ package bg.tu_varna.ks.command.utility;
 import bg.tu_varna.ks.command.files.AppData;
 import bg.tu_varna.ks.contracts.Executable;
 
+import bg.tu_varna.ks.models.Calendar;
 import jakarta.xml.bind.JAXBException;
 import java.io.File;
 import java.io.FileNotFoundException;

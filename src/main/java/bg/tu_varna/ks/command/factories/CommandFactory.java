@@ -1,6 +1,8 @@
 package bg.tu_varna.ks.command.factories;
 
+import bg.tu_varna.ks.command.events.Agenda;
 import bg.tu_varna.ks.command.events.Book;
+import bg.tu_varna.ks.command.events.Unbook;
 import bg.tu_varna.ks.command.utility.*;
 import bg.tu_varna.ks.contracts.Executable;
 import bg.tu_varna.ks.command.Command;
@@ -26,12 +28,12 @@ public class CommandFactory {
             case OPEN -> new Open(arguments);
             case CLOSE -> new Close();
             case SAVE -> new Save();
-            case SAVE_AS -> new SaveAs(arguments);
+            case SAVEAS -> new SaveAs(arguments);
             case HELP -> new Help();
             case EXIT -> new Exit();
             case BOOK -> new Book(arguments);
-            case UNBOOK -> null;
-            case AGENDA -> null;
+            case UNBOOK -> new Unbook(arguments);
+            case AGENDA -> new Agenda(arguments);
             case CHANGE -> null;
             case FIND -> null;
             case HOLIDAY -> null;
