@@ -2,6 +2,7 @@ package bg.tu_varna.ks.command.factories;
 
 import bg.tu_varna.ks.command.events.Agenda;
 import bg.tu_varna.ks.command.events.Book;
+import bg.tu_varna.ks.command.events.Change;
 import bg.tu_varna.ks.command.events.Unbook;
 import bg.tu_varna.ks.command.utility.*;
 import bg.tu_varna.ks.contracts.Executable;
@@ -34,7 +35,7 @@ public class CommandFactory {
             case BOOK -> new Book(arguments);
             case UNBOOK -> new Unbook(arguments);
             case AGENDA -> new Agenda(arguments);
-            case CHANGE -> null;
+            case CHANGE -> new Change(arguments);
             case FIND -> null;
             case HOLIDAY -> null;
             case BUSYDAYS -> null;

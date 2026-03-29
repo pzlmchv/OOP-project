@@ -1,0 +1,1 @@
+java -jar out\artifacts\OOP_project_jar\OOP-project.jar
