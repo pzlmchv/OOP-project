@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AppData implements FileHandler {
@@ -35,17 +36,21 @@ public class AppData implements FileHandler {
         marshaller.marshal(Calendar.getInstance(), file);
     }
 
-    public void read(File file) throws JAXBException, FileNotFoundException {
+    public Calendar readCalendar(File file) throws JAXBException, FileNotFoundException {
         context = JAXBContext.newInstance(Calendar.class);
-        List<Event> events = (
-                (Calendar)context.createUnmarshaller()
-                        .unmarshal(
-                                new FileReader(
-                                        file.getAbsolutePath()
-                                )
-                        )
-        ).getEvents();
-        Calendar.getInstance().setEvents(events);
+
+        Calendar calendar = (Calendar) context.createUnmarshaller()
+                .unmarshal(new FileReader(file.getAbsolutePath()));
+
+        if (calendar.getEvents() == null) {
+            calendar.setEvents(new ArrayList<>());
+        }
+
+        return calendar;
+    }
+
+    public void read(File file) throws JAXBException, FileNotFoundException {
+        Calendar.getInstance().setEvents(readCalendar(file).getEvents());
     }
 
     public void save(File file) throws JAXBException {
@@ -57,6 +62,7 @@ public class AppData implements FileHandler {
         try {
             if (!file.exists() || file.length() == 0) {
                 file.createNewFile();
+                Calendar.getInstance().setEvents(new ArrayList<>());
                 this.file = file;
                 return;
             }
@@ -72,6 +78,7 @@ public class AppData implements FileHandler {
     public void unload() throws JAXBException {
         if (file == null) {
             System.out.println("No file open.");
+            return;
         }
 
         write(file);
@@ -82,6 +89,7 @@ public class AppData implements FileHandler {
     }
 
     public void closeFile() {
+        Calendar.getInstance().setEvents(new ArrayList<>());
         this.file = null;
     }
 }

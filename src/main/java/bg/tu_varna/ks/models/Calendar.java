@@ -35,24 +35,47 @@ public class Calendar {
     @XmlElementWrapper(name = "events")
     @XmlElement(name = "eventList")
     public void setEvents(List<Event> events) {
-        this.events = events;
+        this.events = events == null ? new ArrayList<>() : events;
     }
 
-    public Boolean isConflictingEvent(Event event) {
+    public boolean isConflictingEvent(Event event) {
+        return isConflictingEvent(event, null);
+    }
+
+    public boolean isConflictingEvent(Event event, Event ignoredEvent) {
         return getEventsByDate(event.getDate())
                 .stream()
+                .filter(e -> ignoredEvent == null || !e.equals(ignoredEvent))
                 .anyMatch(e -> event.getStart().isBefore(e.getEnd())
                         && event.getEnd().isAfter(e.getStart())
                 );
     }
 
-    public void addEvent(Event event) {
+    public boolean addEvent(Event event) {
+        if (!isValidEvent(event)) {
+            System.err.println("invalid event");
+            return false;
+        }
+
         if (isConflictingEvent(event)) {
             System.err.println("conflicting event");
-            return;
+            return false;
         }
 
         events.add(event);
+        return true;
+    }
+
+    public boolean canAddEvent(Event event) {
+        return isValidEvent(event) && !isConflictingEvent(event);
+    }
+
+    public boolean isValidEvent(Event event) {
+        return event != null
+                && event.getDate() != null
+                && event.getStart() != null
+                && event.getEnd() != null
+                && event.getStart().isBefore(event.getEnd());
     }
 
     public void removeEvent(Event event) {
@@ -66,7 +89,13 @@ public class Calendar {
                 .toList();
     }
 
-    public void setOption(LocalDate date, LocalTime starttime, String option, String newValue) {
+    public boolean hasHoliday(LocalDate date) {
+        return getEventsByDate(date)
+                .stream()
+                .anyMatch(e -> "HOLIDAY".equalsIgnoreCase(e.getName()));
+    }
+
+    public boolean setOption(LocalDate date, LocalTime starttime, String option, String newValue) {
         Optional<Event> event = events
                 .stream()
                 .filter(e -> e.getDate().equals(date) && e.getStart().equals(starttime))
@@ -74,7 +103,7 @@ public class Calendar {
 
         if (event.isEmpty()) {
             System.err.println("no event found");
-            return;
+            return false;
         }
 
         Event eventToChange = event.get();
@@ -85,30 +114,27 @@ public class Calendar {
         String oldNote = eventToChange.getNote();
 
         switch (option) {
-            case "date":
-                eventToChange.setDate(LocalDate.parse(newValue));
-                break;
-            case "starttime":
-                eventToChange.setStart(LocalTime.parse(newValue));
-                break;
-            case "endtime":
-                eventToChange.setEnd(LocalTime.parse(newValue));
-                break;
-            case "name":
-                eventToChange.setName(newValue);
-                break;
-            case "note":
-                eventToChange.setNote(newValue);
-                break;
+            case "date" -> eventToChange.setDate(LocalDate.parse(newValue));
+            case "starttime" -> eventToChange.setStart(LocalTime.parse(newValue));
+            case "endtime" -> eventToChange.setEnd(LocalTime.parse(newValue));
+            case "name" -> eventToChange.setName(newValue);
+            case "note" -> eventToChange.setNote(newValue);
+            default -> {
+                System.err.println("unknown option");
+                return false;
+            }
         }
 
-        if (isConflictingEvent(eventToChange)) {
-            System.err.println("conflicting event");
+        if (!isValidEvent(eventToChange) || isConflictingEvent(eventToChange, eventToChange)) {
+            System.err.println("conflicting or invalid event");
             eventToChange.setDate(oldDate);
             eventToChange.setStart(oldStart);
             eventToChange.setEnd(oldEnd);
             eventToChange.setName(oldName);
             eventToChange.setNote(oldNote);
+            return false;
         }
+
+        return true;
     }
 }
