@@ -1,9 +1,6 @@
 package bg.tu_varna.ks.command.factories;
 
-import bg.tu_varna.ks.command.events.Agenda;
-import bg.tu_varna.ks.command.events.Book;
-import bg.tu_varna.ks.command.events.Change;
-import bg.tu_varna.ks.command.events.Unbook;
+import bg.tu_varna.ks.command.events.*;
 import bg.tu_varna.ks.command.utility.*;
 import bg.tu_varna.ks.contracts.Executable;
 import bg.tu_varna.ks.command.Command;
@@ -36,12 +33,12 @@ public class CommandFactory {
             case UNBOOK -> new Unbook(arguments);
             case AGENDA -> new Agenda(arguments);
             case CHANGE -> new Change(arguments);
-            case FIND -> null;
-            case HOLIDAY -> null;
-            case BUSYDAYS -> null;
-            case FINDSLOT -> null;
-            case FINDSLOTWITH -> null;
-            case MERGE -> null;
+            case FIND -> new Find(arguments);
+            case HOLIDAY -> new Holiday(arguments);
+            case BUSYDAYS -> new BusyDays(arguments);
+            case FINDSLOT -> new FindSlot(arguments);
+            case FINDSLOTWITH -> new FindSlotWith(arguments);
+            case MERGE -> new Merge(arguments);
         };
     }
 }
