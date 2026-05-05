@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Book implements Executable {
-    private List<String> arguments;
+    private final List<String> arguments;
 
     public Book(List<String> arguments) {
         this.arguments = arguments;
@@ -26,7 +26,7 @@ public class Book implements Executable {
         }
 
         if (arguments.size() != 5) {
-            System.err.println("arguments not right count???");
+            System.err.println("usage: book <date> <starttime> <endtime> <name> <note>");
             return;
         }
 
@@ -39,8 +39,13 @@ public class Book implements Executable {
                 .note(arguments.get(4))
                 .build();
 
-        Calendar.getInstance().addEvent(event);
+        if (Calendar.getInstance().hasHoliday(event.getDate())) {
+            System.err.println("cannot book event on holiday");
+            return;
+        }
 
-        System.out.println("event added successfully");
+        if (Calendar.getInstance().addEvent(event)) {
+            System.out.println("event added successfully");
+        }
     }
 }
