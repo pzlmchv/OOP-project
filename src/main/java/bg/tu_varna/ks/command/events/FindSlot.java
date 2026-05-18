@@ -11,16 +11,56 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Command that finds the earliest free time slot of at least a given
+ * duration on a specific date.
+ * <p>
+ * Usage: <code>findslot &lt;date&gt; &lt;hours&gt;</code>. The duration
+ * argument can be expressed as plain hours (e.g. <code>2</code>) or as
+ * "hours:minutes" (e.g. <code>1:30</code>).
+ * </p>
+ * <p>
+ * Free slots are searched within the working day - from
+ * {@link #WORK_START} (08:00) to {@link #WORK_END} (17:00) - and only
+ * on working days (dates not marked as {@code HOLIDAY}).
+ * </p>
+ *
+ * <p>
+ * The helper methods {@link #findSlot(List, LocalDate, Duration)},
+ * {@link #isHoliday(List, LocalDate)} and {@link #parseDuration(String)}
+ * are declared {@code public static} so they can be reused from
+ * {@link FindSlotWith}.
+ * </p>
+ */
 public class FindSlot implements Executable {
+
+    /** Start of the working day. */
     public static final LocalTime WORK_START = LocalTime.of(8, 0);
+
+    /** End of the working day. */
     public static final LocalTime WORK_END = LocalTime.of(17, 0);
 
+    /** Arguments passed to the command from user input. */
     private final List<String> arguments;
 
+    /**
+     * Constructs a new {@code findslot} command with the given arguments.
+     *
+     * @param arguments argument list (exactly 2 are expected - date and
+     *                  duration)
+     */
     public FindSlot(List<String> arguments) {
         this.arguments = arguments;
     }
 
+    /**
+     * Executes the {@code findslot} operation.
+     * <p>
+     * Delegates the search to the static
+     * {@link #findSlot(List, LocalDate, Duration)} method and prints the
+     * result.
+     * </p>
+     */
     @Override
     public void execute() {
         if (Objects.isNull(AppData.getInstance().getFile())) {
@@ -55,6 +95,30 @@ public class FindSlot implements Executable {
         );
     }
 
+    /**
+     * Finds the earliest free slot in the given set of events for the
+     * specified date and duration.
+     * <p>
+     * The algorithm starts from {@link #WORK_START}, walks through the
+     * day's events sorted by start time, and checks whether there is
+     * enough free room before each event. When there is not, the
+     * "current position" is moved past the end of the inspected event.
+     * Finally it checks whether enough time remains before
+     * {@link #WORK_END}.
+     * </p>
+     *
+     * @param events the full list of events to consider
+     * @param date the date for which a slot is sought
+     * @param duration the minimum required duration
+     * @return the found free slot, or {@code null} if:
+     *         <ul>
+     *           <li>the input is invalid;</li>
+     *           <li>the requested duration exceeds the working day;</li>
+     *           <li>the date is a holiday;</li>
+     *           <li>not enough contiguous time remains between existing
+     *               events.</li>
+     *         </ul>
+     */
     public static Slot findSlot(List<Event> events, LocalDate date, Duration duration) {
         if (date == null || duration == null || duration.isZero() || duration.isNegative()) {
             return null;
@@ -93,6 +157,14 @@ public class FindSlot implements Executable {
         return null;
     }
 
+    /**
+     * Checks whether the given list of events contains a holiday marker
+     * for the specified date.
+     *
+     * @param events the events to inspect
+     * @param date the date to check
+     * @return {@code true} if the date is marked as {@code HOLIDAY}
+     */
     public static boolean isHoliday(List<Event> events, LocalDate date) {
         return events.stream()
                 .anyMatch(e -> e.getDate() != null
@@ -100,6 +172,21 @@ public class FindSlot implements Executable {
                         && "HOLIDAY".equalsIgnoreCase(e.getName()));
     }
 
+    /**
+     * Parses a duration string into a {@link Duration} object.
+     * <p>
+     * Two formats are supported:
+     * </p>
+     * <ul>
+     *   <li>hours only, e.g. <code>"2"</code>;</li>
+     *   <li>hours and minutes, separated by a colon, e.g.
+     *       <code>"1:30"</code>.</li>
+     * </ul>
+     *
+     * @param value textual representation of the duration
+     * @return the corresponding duration
+     * @throws NumberFormatException if the numeric parts are invalid
+     */
     public static Duration parseDuration(String value) {
         if (value.contains(":")) {
             String[] parts = value.split(":");
@@ -111,6 +198,13 @@ public class FindSlot implements Executable {
         return Duration.ofHours(Long.parseLong(value));
     }
 
+    /**
+     * Lightweight description of a free time slot in the calendar.
+     *
+     * @param date date of the slot
+     * @param start start time of the slot
+     * @param end end time of the slot
+     */
     public record Slot(LocalDate date, LocalTime start, LocalTime end) {
     }
 }

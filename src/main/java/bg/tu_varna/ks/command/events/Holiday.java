@@ -11,13 +11,45 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Command that marks a given date as a non-working day (holiday).
+ * <p>
+ * Usage: <code>holiday &lt;date&gt;</code>. Technically, it adds a
+ * special event named <code>HOLIDAY</code> to the calendar, covering
+ * the entire day (00:00:00 - 23:59:59).
+ * </p>
+ * <p>
+ * The command refuses to mark a date if:
+ * </p>
+ * <ul>
+ *   <li>the date is already marked as a holiday; or</li>
+ *   <li>the date already has other events - those must be removed
+ *       first.</li>
+ * </ul>
+ *
+ * @see Calendar#hasHoliday(LocalDate)
+ */
 public class Holiday implements Executable {
+
+    /** Arguments passed to the command from user input. */
     private final List<String> arguments;
 
+    /**
+     * Constructs a new {@code holiday} command with the given arguments.
+     *
+     * @param arguments argument list (exactly 1 is expected - the date)
+     */
     public Holiday(List<String> arguments) {
         this.arguments = arguments;
     }
 
+    /**
+     * Executes the {@code holiday} operation.
+     * <p>
+     * Builds a special "HOLIDAY" event covering the whole day and adds
+     * it to the calendar through {@link Calendar#addEvent(Event)}.
+     * </p>
+     */
     @Override
     public void execute() {
         if (Objects.isNull(AppData.getInstance().getFile())) {

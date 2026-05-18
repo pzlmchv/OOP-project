@@ -11,13 +11,39 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Command that cancels (removes) an existing event from the calendar.
+ * <p>
+ * Usage:
+ * <code>unbook &lt;date&gt; &lt;starttime&gt; &lt;endtime&gt;</code>.
+ * The event is uniquely identified by the triple
+ * <i>date + start time + end time</i>. If no such event exists, an
+ * error is printed.
+ * </p>
+ *
+ * @see Calendar#removeEvent(Event)
+ */
 public class Unbook implements Executable {
+
+    /** Arguments passed to the command from user input. */
     private List<String> arguments;
 
+    /**
+     * Constructs a new {@code unbook} command with the given arguments.
+     *
+     * @param arguments argument list (exactly 3 are expected)
+     */
     public Unbook(List<String> arguments) {
         this.arguments = arguments;
     }
 
+    /**
+     * Executes the {@code unbook} operation.
+     * <p>
+     * Finds the event by date and time interval and removes it from
+     * the {@link Calendar}'s event list.
+     * </p>
+     */
     @Override
     public void execute() {
         if (Objects.isNull(AppData.getInstance().getFile())) {

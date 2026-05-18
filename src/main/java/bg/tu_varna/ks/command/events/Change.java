@@ -9,13 +9,50 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Command that modifies a single field of an existing event.
+ * <p>
+ * Usage:
+ * <code>change &lt;date&gt; &lt;starttime&gt; &lt;option&gt; &lt;newvalue&gt;</code>.
+ * The pair <i>date + start time</i> identifies the event, and
+ * {@code option} is one of:
+ * </p>
+ * <ul>
+ *   <li>{@code date} - new date (format <code>YYYY-MM-DD</code>);</li>
+ *   <li>{@code starttime} - new start time (<code>HH:mm</code>);</li>
+ *   <li>{@code endtime} - new end time (<code>HH:mm</code>);</li>
+ *   <li>{@code name} - new name;</li>
+ *   <li>{@code note} - new note.</li>
+ * </ul>
+ * <p>
+ * If the change leaves the event invalid or causes a conflict with
+ * another event, it is automatically rolled back.
+ * </p>
+ *
+ * @see Calendar#setOption(LocalDate, LocalTime, String, String)
+ */
 public class Change implements Executable {
+
+    /** Arguments passed to the command from user input. */
     private final List<String> arguments;
 
+    /**
+     * Constructs a new {@code change} command with the given arguments.
+     *
+     * @param arguments argument list (exactly 4 are expected)
+     */
     public Change(List<String> arguments) {
         this.arguments = arguments;
     }
 
+    /**
+     * Executes the {@code change} operation.
+     * <p>
+     * Validates the argument count and the field name, then delegates
+     * the actual modification to
+     * {@link Calendar#setOption(LocalDate, LocalTime, String, String)}.
+     * </p>
+     */
     @Override
     public void execute() {
         if (Objects.isNull(AppData.getInstance().getFile())) {

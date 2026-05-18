@@ -6,7 +6,24 @@ import bg.tu_varna.ks.contracts.Executable;
 import jakarta.xml.bind.JAXBException;
 import java.util.Objects;
 
+/**
+ * Command that writes the current calendar state back to the active
+ * file.
+ * <p>
+ * Usage: <code>save</code>. If no file is open, an error is printed.
+ * </p>
+ *
+ * @see AppData#unload()
+ */
 public class Save implements Executable {
+
+    /**
+     * Executes the {@code save} operation.
+     * <p>
+     * Delegates the write to {@link AppData#unload()}. On JAXB errors,
+     * the exception's message is printed to {@link System#err}.
+     * </p>
+     */
     @Override
     public void execute() {
         if (Objects.isNull(AppData.getInstance().getFile())) {

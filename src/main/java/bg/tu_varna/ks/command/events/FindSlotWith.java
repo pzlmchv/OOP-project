@@ -13,14 +13,48 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Command that finds a free slot common to two calendars (the current
+ * one and another one specified as a file).
+ * <p>
+ * Usage:
+ * <code>findslotwith &lt;date&gt; &lt;hours&gt; &lt;calendar&gt;</code>.
+ * The implementation merges the events from both calendars into a
+ * single combined list and reuses the logic of
+ * {@link FindSlot#findSlot(List, LocalDate, Duration)}.
+ * </p>
+ *
+ * @see FindSlot
+ */
 public class FindSlotWith implements Executable {
+
+    /** Arguments passed to the command from user input. */
     private final List<String> arguments;
+
+    /** Default directory used when looking up files by bare name. */
     private static final String PATH = ".\\src\\main\\java\\bg\\tu_varna\\ks\\files\\";
 
+    /**
+     * Constructs a new {@code findslotwith} command with the given
+     * arguments.
+     *
+     * @param arguments argument list (exactly 3 are expected - date,
+     *                  duration, and the file name/path of the other
+     *                  calendar)
+     */
     public FindSlotWith(List<String> arguments) {
         this.arguments = arguments;
     }
 
+    /**
+     * Executes the {@code findslotwith} operation.
+     * <p>
+     * Reads the external calendar file via
+     * {@link AppData#readCalendar(File)}, merges its events with those
+     * of the active calendar, and searches for a free slot in the
+     * resulting union.
+     * </p>
+     */
     @Override
     public void execute() {
         if (Objects.isNull(AppData.getInstance().getFile())) {
@@ -67,6 +101,17 @@ public class FindSlotWith implements Executable {
         }
     }
 
+    /**
+     * Converts a file name or path string into a {@link File} object.
+     * <p>
+     * If the given name is already an absolute path or contains
+     * separators, it is returned directly. Otherwise, the project's
+     * default directory is prepended.
+     * </p>
+     *
+     * @param fileName a file name or path
+     * @return the corresponding {@link File} object
+     */
     private File buildFile(String fileName) {
         File file = new File(fileName);
 

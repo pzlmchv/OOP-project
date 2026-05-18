@@ -13,13 +13,41 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Command that prints workload statistics between two dates.
+ * <p>
+ * Usage: <code>busydays &lt;from&gt; &lt;to&gt;</code>. For every date
+ * in the range that has events (excluding those marked as a holiday),
+ * the total busy duration is summed and printed in hours and minutes.
+ * Results are sorted by descending workload, with date as a tie-breaker.
+ * </p>
+ *
+ * @see Calendar#getEvents()
+ */
 public class BusyDays implements Executable {
+
+    /** Arguments passed to the command from user input. */
     private final List<String> arguments;
 
+    /**
+     * Constructs a new {@code busydays} command with the given arguments.
+     *
+     * @param arguments argument list (exactly 2 are expected - start and
+     *                  end date)
+     */
     public BusyDays(List<String> arguments) {
         this.arguments = arguments;
     }
 
+    /**
+     * Executes the {@code busydays} operation.
+     * <p>
+     * Groups events by date with
+     * {@link Collectors#groupingBy(java.util.function.Function, java.util.stream.Collector)}
+     * and sums their durations in minutes, then formats the output in
+     * hours and minutes.
+     * </p>
+     */
     @Override
     public void execute() {
         if (Objects.isNull(AppData.getInstance().getFile())) {
