@@ -1,0 +1,9 @@
+bg.tu_varna.ks
+bg.tu_varna.ks.command
+bg.tu_varna.ks.command.events
+bg.tu_varna.ks.command.factories
+bg.tu_varna.ks.command.files
+bg.tu_varna.ks.command.files.adapters
+bg.tu_varna.ks.command.utility
+bg.tu_varna.ks.contracts
+bg.tu_varna.ks.models
