@@ -49,7 +49,7 @@ public class Agenda implements Executable {
         }
 
         if (arguments.size() != 1) {
-            System.err.println("arguments not right count???");
+            System.err.println("Arguments are not right");
             return;
         }
 
