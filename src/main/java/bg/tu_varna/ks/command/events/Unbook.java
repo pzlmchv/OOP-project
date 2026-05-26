@@ -69,7 +69,7 @@ public class Unbook implements Executable {
                 .findFirst();
 
         if (event.isEmpty()) {
-            System.err.println("nqma takuv event bonak");
+            System.err.println("No event with such name");
             return;
         }
 
